@@ -138,7 +138,7 @@ class AudioClassificationHelper(
         val cat=output[0].categories
 
 
-        val `my-timestamp` = System.currentTimeMillis().toString().substring(0,11)
+        val `my-timestamp` = System.currentTimeMillis().toString().substring(0,10)
 
 
 
