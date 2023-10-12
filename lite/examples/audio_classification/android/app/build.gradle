@@ -39,6 +39,7 @@ android {
     kotlinOptions {
         jvmTarget = rootProject.ext.java_version
     }
+    //namespace 'org.tensorflow.lite.examples.audio'
 }
 
 // import DownloadModels task

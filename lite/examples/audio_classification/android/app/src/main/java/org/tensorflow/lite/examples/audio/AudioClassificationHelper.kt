@@ -26,6 +26,10 @@ import org.tensorflow.lite.examples.audio.fragments.AudioClassificationListener
 import org.tensorflow.lite.support.audio.TensorAudio
 import org.tensorflow.lite.task.audio.classifier.AudioClassifier
 import org.tensorflow.lite.task.core.BaseOptions
+import java.io.File
+import kotlin.math.log10
+import kotlin.math.sqrt
+
 
 class AudioClassificationHelper(
   val context: Context,
@@ -42,13 +46,22 @@ class AudioClassificationHelper(
     private lateinit var recorder: AudioRecord
     private lateinit var executor: ScheduledThreadPoolExecutor
 
+
     private val classifyRunnable = Runnable {
+
         classifyAudio()
-    }
+
+        }
+
 
     init {
         initClassifier()
+
     }
+
+
+
+
 
     fun initClassifier() {
         // Set general detection options, e.g. number of used threads
@@ -114,13 +127,102 @@ class AudioClassificationHelper(
             TimeUnit.MILLISECONDS)
     }
 
+
     private fun classifyAudio() {
+
         tensorAudio.load(recorder)
         var inferenceTime = SystemClock.uptimeMillis()
         val output = classifier.classify(tensorAudio)
         inferenceTime = SystemClock.uptimeMillis() - inferenceTime
         listener.onResult(output[0].categories, inferenceTime)
+        val cat=output[0].categories
+
+
+        val `my-timestamp` = System.currentTimeMillis().toString().substring(0,10)
+
+
+
+
+
+
+//Android 11
+/*
+        Log.d("Tag", cat.isEmpty().toString())
+
+        if (cat.isEmpty()){
+
+            Log.d("Tag", cat.size.toString())
+        }
+
+        else{
+            Log.d("Tag", cat.toString()+cat.isEmpty())
+        }
+*/
+
+//Android 7
+/*
+
+        val file = File("/storage/emulated/0/Android/data/tensorflow_audio/audio_tracking.txt")
+
+
+        if (cat.isEmpty())
+        {
+            //Log.d("Tag", cat.toString()+cat.isEmpty())
+            file.appendText(
+                "$`my-timestamp`" + "_" +
+                        "$`my-timestamp`" + "_" +
+                        "$`my-timestamp`" + "_" +
+                        "$`my-timestamp`"+
+                        "\n")
+        }
+        else{
+            Log.d("Tag", cat.first().label +cat.toString()+cat.isEmpty())
+            file.appendText(
+                "$`my-timestamp`" + "_" +
+                        listOf(cat.first().label).first() + "_" +
+                        listOf(cat.first().score).first() + "_" +
+                        listOf(cat.first().score).isEmpty()+
+                        "\n")
+        }
+
+*/
+
+
+//Android 6
+///*
+
+        val file = File("/storage/emulated/0/Android/data/tensorflow_audio/audio_tracking.txt")
+
+        if (cat.isEmpty())
+
+        {
+
+            file.appendText(
+                "$`my-timestamp`" + "_" +
+                        "$`my-timestamp`" + "_" +
+                        "$`my-timestamp`" + "_" +
+                        "$`my-timestamp`"+
+                        "\n")
+        }
+
+        else {
+            Log.d("Tag", cat.toString()+cat.isEmpty())
+            file.appendText(
+                "$`my-timestamp`" + "_" +
+                        listOf(cat.first().label).first() + "_" +
+                        listOf(cat.first().score).first() + "_" +
+                        listOf(cat.first().score).isEmpty()+
+                        "\n"
+            )
+            //Thread.sleep(500)
+
+        }
+//*/
+
     }
+
+
+
 
     fun stopAudioClassification() {
         recorder.stop()
@@ -135,5 +237,17 @@ class AudioClassificationHelper(
         const val DEFAULT_OVERLAP_VALUE = 0.5f
         const val YAMNET_MODEL = "yamnet.tflite"
         const val SPEECH_COMMAND_MODEL = "speech.tflite"
+
+
     }
 }
+
+
+
+
+
+
+
+
+
+

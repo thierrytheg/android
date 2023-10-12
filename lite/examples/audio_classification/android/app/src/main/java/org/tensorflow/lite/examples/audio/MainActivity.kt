@@ -15,10 +15,16 @@
  */
 package org.tensorflow.lite.examples.audio
 
+import android.content.Context
 import android.os.Build
 import android.os.Bundle
+import android.os.SystemClock
 import androidx.appcompat.app.AppCompatActivity
 import org.tensorflow.lite.examples.audio.databinding.ActivityMainBinding
+import java.io.File
+import java.io.FileOutputStream
+import java.io.IOException
+import android.view.WindowManager
 
 class MainActivity : AppCompatActivity() {
     private lateinit var activityMainBinding: ActivityMainBinding
@@ -27,7 +33,25 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         activityMainBinding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(activityMainBinding.root)
+        window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+
+
+
+        val file = File("/storage/emulated/0/Android/data/tensorflow_audio/audio_tracking.txt")
+
+
+        if (!file.exists())
+        {
+            file.createNewFile()
+            //val data: String = "time,label,score,\n"
+            val data: String = "time_label_score_\n"
+
+            file.appendText("$data")
+
+        }
+
     }
+
 
     override fun onBackPressed() {
         if (Build.VERSION.SDK_INT == Build.VERSION_CODES.Q) {
@@ -38,4 +62,6 @@ class MainActivity : AppCompatActivity() {
             super.onBackPressed()
         }
     }
+
+
 }
