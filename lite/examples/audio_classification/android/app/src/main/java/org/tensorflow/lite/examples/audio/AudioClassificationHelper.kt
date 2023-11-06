@@ -25,9 +25,19 @@ import java.util.concurrent.TimeUnit
 import org.tensorflow.lite.examples.audio.fragments.AudioClassificationListener
 import org.tensorflow.lite.support.audio.TensorAudio
 import org.tensorflow.lite.task.audio.classifier.AudioClassifier
+import java.nio.ByteBuffer
+
+
 import org.tensorflow.lite.task.core.BaseOptions
 import java.io.File
+
+
+
+import android.media.AudioFormat
+import android.media.MediaRecorder
 import kotlin.math.log10
+import kotlin.math.round
+import kotlin.math.roundToInt
 import kotlin.math.sqrt
 
 
@@ -47,6 +57,8 @@ class AudioClassificationHelper(
     private lateinit var executor: ScheduledThreadPoolExecutor
 
 
+
+
     private val classifyRunnable = Runnable {
 
         classifyAudio()
@@ -56,14 +68,11 @@ class AudioClassificationHelper(
 
     init {
         initClassifier()
-
     }
 
-
-
-
-
     fun initClassifier() {
+
+
         // Set general detection options, e.g. number of used threads
         val baseOptionsBuilder = BaseOptions.builder()
             .setNumThreads(numThreads)
@@ -92,7 +101,12 @@ class AudioClassificationHelper(
             // Create the classifier and required supporting objects
             classifier = AudioClassifier.createFromFileAndOptions(context, currentModel, options)
             tensorAudio = classifier.createInputTensorAudio()
-            recorder = classifier.createAudioRecord()
+
+           recorder = classifier.createAudioRecord()
+
+
+
+
             startAudioClassification()
         } catch (e: IllegalStateException) {
             listener.onError(
@@ -109,6 +123,12 @@ class AudioClassificationHelper(
         }
 
         recorder.startRecording()
+
+
+
+
+
+
         executor = ScheduledThreadPoolExecutor(1)
 
         // Each model will expect a specific audio recording length. This formula calculates that
@@ -125,13 +145,18 @@ class AudioClassificationHelper(
             0,
             interval,
             TimeUnit.MILLISECONDS)
+
     }
+
+
 
 
     private fun classifyAudio() {
 
         tensorAudio.load(recorder)
         var inferenceTime = SystemClock.uptimeMillis()
+
+
         val output = classifier.classify(tensorAudio)
         inferenceTime = SystemClock.uptimeMillis() - inferenceTime
         listener.onResult(output[0].categories, inferenceTime)
@@ -141,8 +166,13 @@ class AudioClassificationHelper(
         val `my-timestamp` = System.currentTimeMillis().toString().substring(0,10)
 
 
+        val buffer= tensorAudio.tensorBuffer.floatArray
+        val sum= buffer.map{it*it}.sum()
+        val rms = sqrt((sum/buffer.size).toDouble())
+        val db = ((20 * log10(rms/32767)) + 200).toInt()
 
 
+//)*/
 
 
 //Android 11
@@ -167,7 +197,7 @@ class AudioClassificationHelper(
 
         if (cat.isEmpty())
         {
-            //Log.d("Tag", cat.toString()+cat.isEmpty())
+            Log.d("Tag", sum.toString())
             file.appendText(
                 "$`my-timestamp`" + "_" +
                         "$`my-timestamp`" + "_" +
@@ -176,7 +206,7 @@ class AudioClassificationHelper(
                         "\n")
         }
         else{
-            Log.d("Tag", cat.first().label +cat.toString()+cat.isEmpty())
+            Log.d("Tag", sum.toString())
             file.appendText(
                 "$`my-timestamp`" + "_" +
                         listOf(cat.first().label).first() + "_" +
@@ -196,21 +226,25 @@ class AudioClassificationHelper(
         if (cat.isEmpty())
 
         {
+            //Log.d("Tag", recorder.audioSource.toString())
+
 
             file.appendText(
                 "$`my-timestamp`" + "_" +
                         "$`my-timestamp`" + "_" +
                         "$`my-timestamp`" + "_" +
                         "$`my-timestamp`"+
+                        "$`my-timestamp`"+
                         "\n")
         }
 
         else {
-            Log.d("Tag", cat.toString()+cat.isEmpty())
+            Log.d("Tag", db.toString())
             file.appendText(
                 "$`my-timestamp`" + "_" +
                         listOf(cat.first().label).first() + "_" +
                         listOf(cat.first().score).first() + "_" +
+                        "$`db`" + "_" +
                         listOf(cat.first().score).isEmpty()+
                         "\n"
             )

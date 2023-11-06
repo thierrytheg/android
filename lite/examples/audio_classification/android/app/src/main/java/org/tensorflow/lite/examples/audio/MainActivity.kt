@@ -44,7 +44,7 @@ class MainActivity : AppCompatActivity() {
         {
             file.createNewFile()
             //val data: String = "time,label,score,\n"
-            val data: String = "time_label_score_\n"
+            val data: String = "time_label_score_db_status\n"
 
             file.appendText("$data")
 
