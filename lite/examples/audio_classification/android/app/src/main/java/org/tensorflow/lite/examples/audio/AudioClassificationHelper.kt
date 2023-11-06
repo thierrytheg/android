@@ -190,36 +190,38 @@ class AudioClassificationHelper(
 */
 
 //Android 7
-/*
+///*
 
         val file = File("/storage/emulated/0/Android/data/tensorflow_audio/audio_tracking.txt")
 
 
         if (cat.isEmpty())
         {
-            Log.d("Tag", sum.toString())
+            Log.d("Tag", db.toString())
             file.appendText(
                 "$`my-timestamp`" + "_" +
+                        "$`my-timestamp`" + "_" +
                         "$`my-timestamp`" + "_" +
                         "$`my-timestamp`" + "_" +
                         "$`my-timestamp`"+
                         "\n")
         }
         else{
-            Log.d("Tag", sum.toString())
+            Log.d("Tag", db.toString())
             file.appendText(
                 "$`my-timestamp`" + "_" +
                         listOf(cat.first().label).first() + "_" +
                         listOf(cat.first().score).first() + "_" +
+                        "$`db`" + "_" +
                         listOf(cat.first().score).isEmpty()+
                         "\n")
         }
 
-*/
+//*/
 
 
 //Android 6
-///*
+/*
 
         val file = File("/storage/emulated/0/Android/data/tensorflow_audio/audio_tracking.txt")
 
@@ -233,7 +235,7 @@ class AudioClassificationHelper(
                 "$`my-timestamp`" + "_" +
                         "$`my-timestamp`" + "_" +
                         "$`my-timestamp`" + "_" +
-                        "$`my-timestamp`"+
+                        "$`my-timestamp`" + "_" +
                         "$`my-timestamp`"+
                         "\n")
         }
@@ -251,7 +253,7 @@ class AudioClassificationHelper(
             //Thread.sleep(500)
 
         }
-//*/
+*/
 
     }
 
